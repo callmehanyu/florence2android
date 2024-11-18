@@ -1,0 +1,20 @@
+package zhy.florence2_android
+
+enum class TaskTypes {
+    OCR,
+    OCR_WITH_REGION,
+    CAPTION,
+    DETAILED_CAPTION,
+    MORE_DETAILED_CAPTION,
+    OD,
+    DENSE_REGION_CAPTION,
+    CAPTION_TO_PHRASE_GROUNDING,
+    REFERRING_EXPRESSION_SEGMENTATION,
+    //TODO pius: not working properly, generated tokens don't seem to be ok
+    REGION_TO_SEGMENTATION,
+    OPEN_VOCABULARY_DETECTION,
+    REGION_TO_CATEGORY,
+    REGION_TO_DESCRIPTION,
+    REGION_TO_OCR,
+    REGION_PROPOSAL
+}
