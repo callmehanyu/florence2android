@@ -8,6 +8,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import zhy.florence2_android.databinding.ActivityMainBinding
+import zhy.florence2_android.debug.runOcrTaskVisionEncoderUInt8Test
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,7 +31,7 @@ class MainActivity : AppCompatActivity() {
             Snackbar.make(view, "执行 florence2 ", Snackbar.LENGTH_LONG)
                 .setAction("Action", null)
                 .setAnchorView(R.id.fab).show()
-            runTaskList(this)
+            runOcrTaskVisionEncoderUInt8Test(this)
         }
     }
 

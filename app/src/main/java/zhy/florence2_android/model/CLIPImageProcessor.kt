@@ -53,7 +53,7 @@ class CLIPImageProcessor(private val context: Context) {
         return input_normalized to (bitmap.width to bitmap.height)
     }
 
-    fun PreprocessMock(imgPath: String, path: String): Pair<OnnxTensor, Pair<Int, Int>> {
+    fun PreprocessMock3(imgPath: String, path: String): Pair<OnnxTensor, Pair<Int, Int>> {
         val CropHeight = 768
         val CropWidth = 768
         val bitmap = getBitmapFromAsset(context, imgPath)
@@ -95,6 +95,52 @@ class CLIPImageProcessor(private val context: Context) {
 //            }.toTypedArray()
 //        }.toTypedArray()
         val input_normalized = OnnxTensor.createTensor(OrtEnvironment.getEnvironment(), tensorData)
+        return input_normalized to (bitmap.width to bitmap.height)
+
+    }
+
+    fun PreprocessMock4(imgPath: String, path: String): Pair<OnnxTensor, Pair<Int, Int>> {
+        val CropHeight = 768
+        val CropWidth = 768
+        val bitmap = getBitmapFromAsset(context, imgPath)
+            .crop(Rect(0, 0, CropWidth, CropHeight))
+
+        val inputString = readAssetFile(context, path)
+
+        // 解析字符串为整数列表
+        val numbers = inputString
+            .removeSurrounding("[", "]")
+            .split(",")
+            .map { it.toFloat() }
+
+        // 定义三维数组的维度
+        val shape = Triple(3, 768, 768)
+
+        // 初始化三维数组
+        val tensorData = Array(shape.first) {
+            Array(shape.second) {
+                FloatArray(shape.third)
+            }
+        }
+
+        // 填充三维数组
+        var index = 0
+        for (i in 0 until shape.first) {
+            for (j in 0 until shape.second) {
+                for (k in 0 until shape.third) {
+                    tensorData[i][j][k] = numbers[index % numbers.size]
+                    index++
+                }
+            }
+        }
+//        val tensorDataInt = tensorData.map { // todo
+//            it.map {
+//                it.map {
+//                    it.toInt()
+//                }.toIntArray()
+//            }.toTypedArray()
+//        }.toTypedArray()
+        val input_normalized = OnnxTensor.createTensor(OrtEnvironment.getEnvironment(), arrayOf(tensorData))
         return input_normalized to (bitmap.width to bitmap.height)
 
     }
