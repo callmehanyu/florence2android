@@ -26,7 +26,7 @@ fun runOcrTaskVisionEncoderTest(context: Context) {
         val modelSession = Florence2ModelVisionEncoderTest(context)
 
         val task = TaskTypes.OCR
-        val resultsBook = modelSession.runPart1Section1(task, "book.jpg", "DUANE")
+        val resultsBook = modelSession.run(task, "book.jpg", "DUANE")
         Log.d(TEST, "$task : ${Gson().toJson(resultsBook)}")
 
     }
@@ -89,133 +89,135 @@ class Florence2ModelVisionEncoderTest(private val context: Context) {
 
     }
 
-    fun runPart1Section1(task: TaskTypes, imgPath: String, textInput: String) {
+    fun run(task: TaskTypes, imgPath: String, textInput: String): OnnxTensor {
         val (pixelValues, imgSize) = _imageProcessor.PreprocessMock4(
             imgPath,
             "image_tensor.txt"
         )
-        val part1_section1Result = _sessionVisionEncoder_part1_section1.run(
+
+        val _sessionVisionEncoder_part12_result = run(pixelValues)
+
+        Log.d(TEST, "runPart1Section1 imageFeaturesResult=$_sessionVisionEncoder_part12_result")
+
+        return _sessionVisionEncoder_part12_result
+
+    }
+
+    fun run(pixelValues: OnnxTensor): OnnxTensor {
+        val _sessionVisionEncoder_part1_result = _sessionVisionEncoder_part1.run(
             mapOf("pixel_values" to pixelValues),
-            setOf("/convs.0/proj/Conv_output_0"),
-            runOptions
-        )
-
-        //
-        val part1_section2Result = _sessionVisionEncoder_part1_section2.run(
-            mapOf("/convs.0/proj/Conv_output_0" to part1_section1Result["/convs.0/proj/Conv_output_0"].get() as OnnxTensor),
-            setOf("/convs.0/norm/Add_1_output_0", "/blocks.0/blocks.0.0/spatial_block/conv1/fn/dw/Conv_output_0"),
-            runOptions
-        )
-
-        val part1_section3Result = _sessionVisionEncoder_part1_section3.run(
-            mapOf(
-                "/convs.0/norm/Add_1_output_0" to part1_section2Result["/convs.0/norm/Add_1_output_0"].get() as OnnxTensor,
-                "/blocks.0/blocks.0.0/spatial_block/conv1/fn/dw/Conv_output_0" to part1_section2Result["/blocks.0/blocks.0.0/spatial_block/conv1/fn/dw/Conv_output_0"].get() as OnnxTensor
-            ),
-            setOf("/blocks.0/blocks.0.0/spatial_block/conv2/fn/Reshape_output_0", "/blocks.0/blocks.0.0/spatial_block/window_attn/Add_output_0"),
-            runOptions
-        )
-
-        val part1_section4Result = _sessionVisionEncoder_part1_section4.run(
-            mapOf(
-                "/blocks.0/blocks.0.0/spatial_block/conv2/fn/Reshape_output_0" to part1_section3Result["/blocks.0/blocks.0.0/spatial_block/conv2/fn/Reshape_output_0"].get() as OnnxTensor,
-                "/blocks.0/blocks.0.0/spatial_block/window_attn/Add_output_0" to part1_section3Result["/blocks.0/blocks.0.0/spatial_block/window_attn/Add_output_0"].get() as OnnxTensor
-            ),
-            setOf("/blocks.0/blocks.0.0/spatial_block/ffn/Add_output_0", "/blocks.0/blocks.0.0/channel_block/conv1/fn/dw/Conv_output_0"),
-            runOptions
-        )
-
-        val part1_section5Result = _sessionVisionEncoder_part1_section5.run(
-            mapOf(
-                "/blocks.0/blocks.0.0/spatial_block/ffn/Add_output_0" to part1_section4Result["/blocks.0/blocks.0.0/spatial_block/ffn/Add_output_0"].get() as OnnxTensor,
-                "/blocks.0/blocks.0.0/channel_block/conv1/fn/dw/Conv_output_0" to part1_section4Result["/blocks.0/blocks.0.0/channel_block/conv1/fn/dw/Conv_output_0"].get() as OnnxTensor
-            ),
-            setOf("/blocks.0/blocks.0.0/channel_block/channel_attn/Add_output_0", "/blocks.0/blocks.0.0/channel_block/conv2/fn/Reshape_output_0"),
-            runOptions
-        )
-
-        // todo 不准
-        val part1_section6Result = _sessionVisionEncoder_part1_section6.run(
-            mapOf(
-                "/blocks.0/blocks.0.0/channel_block/channel_attn/Add_output_0" to part1_section5Result["/blocks.0/blocks.0.0/channel_block/channel_attn/Add_output_0"].get() as OnnxTensor,
-                "/blocks.0/blocks.0.0/channel_block/conv2/fn/Reshape_output_0" to part1_section5Result["/blocks.0/blocks.0.0/channel_block/conv2/fn/Reshape_output_0"].get() as OnnxTensor
-            ),
             setOf("/convs.1/Transpose_output_0"),
             runOptions
         )
 
-        val part1_section6_Unit1Result = _sessionVisionEncoder_part1_section6_unit1.run(
-            mapOf(
-                "/blocks.0/blocks.0.0/channel_block/conv2/fn/Reshape_output_0" to part1_section5Result["/blocks.0/blocks.0.0/channel_block/conv2/fn/Reshape_output_0"].get() as OnnxTensor
-            ),
-            setOf("/blocks.0/blocks.0.0/channel_block/conv2/fn/Transpose_1_output_0", "/convs.1/Unsqueeze_2_output_0", "/convs.1/Unsqueeze_1_output_0"),
+        val _sessionVisionEncoder_part2_result = _sessionVisionEncoder_part2.run(
+            mapOf("/convs.1/Transpose_output_0" to _sessionVisionEncoder_part1_result["/convs.1/Transpose_output_0"].get() as OnnxTensor),
+            setOf("/convs.2/Transpose_output_0"),
             runOptions
         )
 
-        // todo 不准
-        val part1_section6_Unit2Result = _sessionVisionEncoder_part1_section6_unit2.run(
-            mapOf(
-                "/blocks.0/blocks.0.0/channel_block/channel_attn/Add_output_0" to part1_section5Result["/blocks.0/blocks.0.0/channel_block/channel_attn/Add_output_0"].get() as OnnxTensor,
-                "/blocks.0/blocks.0.0/channel_block/conv2/fn/Transpose_1_output_0" to part1_section6_Unit1Result["/blocks.0/blocks.0.0/channel_block/conv2/fn/Transpose_1_output_0"].get() as OnnxTensor
+        val _sessionVisionEncoder_part3_result = _sessionVisionEncoder_part3.run(
+            mapOf("/convs.2/Transpose_output_0" to _sessionVisionEncoder_part2_result["/convs.2/Transpose_output_0"].get() as OnnxTensor),
+            setOf(
+                "/blocks.2/blocks.2.0/channel_block/ffn/Add_output_0",
+                "/blocks.2/blocks.2.1/spatial_block/conv1/fn/Reshape_output_0"
             ),
-            setOf("/convs.1/Unsqueeze_output_0", "/convs.1/norm/Add_1_output_0"),
             runOptions
         )
-
-        // todo 不准
-        val part1_section6_Unit2_block1Result = _sessionVisionEncoder_part1_section6_unit2_block1.run(
+        val _sessionVisionEncoder_part4_result = _sessionVisionEncoder_part4.run(
             mapOf(
-                "/blocks.0/blocks.0.0/channel_block/channel_attn/Add_output_0" to part1_section5Result["/blocks.0/blocks.0.0/channel_block/channel_attn/Add_output_0"].get() as OnnxTensor,
-                "/blocks.0/blocks.0.0/channel_block/conv2/fn/Transpose_1_output_0" to part1_section6_Unit1Result["/blocks.0/blocks.0.0/channel_block/conv2/fn/Transpose_1_output_0"].get() as OnnxTensor
+                "/blocks.2/blocks.2.0/channel_block/ffn/Add_output_0" to _sessionVisionEncoder_part3_result["/blocks.2/blocks.2.0/channel_block/ffn/Add_output_0"].get() as OnnxTensor,
+                "/blocks.2/blocks.2.1/spatial_block/conv1/fn/Reshape_output_0" to _sessionVisionEncoder_part3_result["/blocks.2/blocks.2.1/spatial_block/conv1/fn/Reshape_output_0"].get() as OnnxTensor,
             ),
-            setOf("/blocks.0/blocks.0.0/channel_block/conv2/Add_output_0", "/blocks.0/blocks.0.0/channel_block/ffn/fn/net/fc2/Add_output_0"),
+            setOf(
+                "/blocks.2/blocks.2.1/channel_block/ffn/Add_output_0",
+                "/blocks.2/blocks.2.2/spatial_block/conv1/fn/Reshape_output_0"
+            ),
             runOptions
         )
-
-        val part1_section6_Unit2_block2Result = _sessionVisionEncoder_part1_section6_unit2_block2.run(
+        val _sessionVisionEncoder_part5_result = _sessionVisionEncoder_part5.run(
             mapOf(
-                "/blocks.0/blocks.0.0/channel_block/conv2/Add_output_0" to part1_section6_Unit2_block1Result["/blocks.0/blocks.0.0/channel_block/conv2/Add_output_0"].get() as OnnxTensor,
-                "/blocks.0/blocks.0.0/channel_block/ffn/fn/net/fc2/Add_output_0" to part1_section6_Unit2_block1Result["/blocks.0/blocks.0.0/channel_block/ffn/fn/net/fc2/Add_output_0"].get() as OnnxTensor
+                "/blocks.2/blocks.2.1/channel_block/ffn/Add_output_0" to _sessionVisionEncoder_part4_result["/blocks.2/blocks.2.1/channel_block/ffn/Add_output_0"].get() as OnnxTensor,
+                "/blocks.2/blocks.2.2/spatial_block/conv1/fn/Reshape_output_0" to _sessionVisionEncoder_part4_result["/blocks.2/blocks.2.2/spatial_block/conv1/fn/Reshape_output_0"].get() as OnnxTensor,
             ),
-            setOf("/convs.1/Unsqueeze_output_0", "/convs.1/norm/Add_1_output_0"),
+            setOf(
+                "/blocks.2/blocks.2.2/channel_block/ffn/Add_output_0",
+                "/blocks.2/blocks.2.3/spatial_block/conv1/fn/Reshape_output_0"
+            ),
             runOptions
         )
-
-        val part1_section6_Unit2_block1_segment1Result = _sessionVisionEncoder_part1_section6_unit2_block1_segment1.run(
+        val _sessionVisionEncoder_part6_result = _sessionVisionEncoder_part6.run(
             mapOf(
-                "/blocks.0/blocks.0.0/channel_block/channel_attn/Add_output_0" to part1_section5Result["/blocks.0/blocks.0.0/channel_block/channel_attn/Add_output_0"].get() as OnnxTensor,
-                "/blocks.0/blocks.0.0/channel_block/conv2/fn/Transpose_1_output_0" to part1_section6_Unit1Result["/blocks.0/blocks.0.0/channel_block/conv2/fn/Transpose_1_output_0"].get() as OnnxTensor
+                "/blocks.2/blocks.2.2/channel_block/ffn/Add_output_0" to _sessionVisionEncoder_part5_result["/blocks.2/blocks.2.2/channel_block/ffn/Add_output_0"].get() as OnnxTensor,
+                "/blocks.2/blocks.2.3/spatial_block/conv1/fn/Reshape_output_0" to _sessionVisionEncoder_part5_result["/blocks.2/blocks.2.3/spatial_block/conv1/fn/Reshape_output_0"].get() as OnnxTensor,
             ),
-            setOf("/blocks.0/blocks.0.0/channel_block/conv2/Add_output_0", "/blocks.0/blocks.0.0/channel_block/ffn/norm/Div_output_0"),
+            setOf(
+                "/blocks.2/blocks.2.3/channel_block/ffn/Add_output_0",
+                "/blocks.2/blocks.2.4/spatial_block/conv1/fn/Reshape_output_0"
+            ),
             runOptions
         )
-
-        val part1_section6_Unit2_block1_segment2Result = _sessionVisionEncoder_part1_section6_unit2_block1_segment2.run(
+        val _sessionVisionEncoder_part7_result = _sessionVisionEncoder_part7.run(
             mapOf(
-                "/blocks.0/blocks.0.0/channel_block/ffn/norm/Div_output_0" to part1_section6_Unit2_block1_segment1Result["/blocks.0/blocks.0.0/channel_block/ffn/norm/Div_output_0"].get() as OnnxTensor,
+                "/blocks.2/blocks.2.3/channel_block/ffn/Add_output_0" to _sessionVisionEncoder_part6_result["/blocks.2/blocks.2.3/channel_block/ffn/Add_output_0"].get() as OnnxTensor,
+                "/blocks.2/blocks.2.4/spatial_block/conv1/fn/Reshape_output_0" to _sessionVisionEncoder_part6_result["/blocks.2/blocks.2.4/spatial_block/conv1/fn/Reshape_output_0"].get() as OnnxTensor,
             ),
-            setOf("/blocks.0/blocks.0.0/channel_block/ffn/fn/net/fc1/MatMul_output_0"),
+            setOf(
+                "/blocks.2/blocks.2.4/channel_block/ffn/Add_output_0",
+                "/blocks.2/blocks.2.5/spatial_block/conv1/fn/Reshape_output_0"
+            ),
             runOptions
         )
-
-        val part1_section6_Unit2_block1_segment3Result = _sessionVisionEncoder_part1_section6_unit2_block1_segment3.run(
+        val _sessionVisionEncoder_part8_result = _sessionVisionEncoder_part8.run(
             mapOf(
-                "/blocks.0/blocks.0.0/channel_block/ffn/fn/net/fc1/MatMul_output_0" to part1_section6_Unit2_block1_segment2Result["/blocks.0/blocks.0.0/channel_block/ffn/fn/net/fc1/MatMul_output_0"].get() as OnnxTensor,
+                "/blocks.2/blocks.2.4/channel_block/ffn/Add_output_0" to _sessionVisionEncoder_part7_result["/blocks.2/blocks.2.4/channel_block/ffn/Add_output_0"].get() as OnnxTensor,
+                "/blocks.2/blocks.2.5/spatial_block/conv1/fn/Reshape_output_0" to _sessionVisionEncoder_part7_result["/blocks.2/blocks.2.5/spatial_block/conv1/fn/Reshape_output_0"].get() as OnnxTensor,
             ),
-            setOf("/blocks.0/blocks.0.0/channel_block/ffn/fn/net/act/Mul_1_output_0"),
+            setOf(
+                "/blocks.2/blocks.2.5/channel_block/ffn/Add_output_0",
+                "/blocks.2/blocks.2.6/spatial_block/conv1/fn/Reshape_output_0"
+            ),
             runOptions
         )
-
-        val part1_section6_Unit2_block1_segment4Result = _sessionVisionEncoder_part1_section6_unit2_block1_segment4.run(
+        val _sessionVisionEncoder_part9_result = _sessionVisionEncoder_part9.run(
             mapOf(
-                "/blocks.0/blocks.0.0/channel_block/ffn/fn/net/act/Mul_1_output_0" to part1_section6_Unit2_block1_segment3Result["/blocks.0/blocks.0.0/channel_block/ffn/fn/net/act/Mul_1_output_0"].get() as OnnxTensor,
+                "/blocks.2/blocks.2.5/channel_block/ffn/Add_output_0" to _sessionVisionEncoder_part8_result["/blocks.2/blocks.2.5/channel_block/ffn/Add_output_0"].get() as OnnxTensor,
+                "/blocks.2/blocks.2.6/spatial_block/conv1/fn/Reshape_output_0" to _sessionVisionEncoder_part8_result["/blocks.2/blocks.2.6/spatial_block/conv1/fn/Reshape_output_0"].get() as OnnxTensor,
             ),
-            setOf("/blocks.0/blocks.0.0/channel_block/ffn/fn/net/fc2/Add_output_0"),
+            setOf(
+                "/blocks.2/blocks.2.6/channel_block/ffn/Add_output_0",
+                "/blocks.2/blocks.2.7/spatial_block/conv1/fn/Reshape_output_0"
+            ),
             runOptions
         )
-
-        Log.d(TEST, "runPart1Section1 imageFeaturesResult=$part1_section6_Unit2_block1_segment4Result")
-
+        val _sessionVisionEncoder_part10_result = _sessionVisionEncoder_part10.run(
+            mapOf(
+                "/blocks.2/blocks.2.6/channel_block/ffn/Add_output_0" to _sessionVisionEncoder_part9_result["/blocks.2/blocks.2.6/channel_block/ffn/Add_output_0"].get() as OnnxTensor,
+                "/blocks.2/blocks.2.7/spatial_block/conv1/fn/Reshape_output_0" to _sessionVisionEncoder_part9_result["/blocks.2/blocks.2.7/spatial_block/conv1/fn/Reshape_output_0"].get() as OnnxTensor,
+            ),
+            setOf(
+                "/blocks.2/blocks.2.7/channel_block/ffn/Add_output_0",
+                "/blocks.2/blocks.2.8/spatial_block/conv1/fn/Reshape_output_0"
+            ),
+            runOptions
+        )
+        val _sessionVisionEncoder_part11_result = _sessionVisionEncoder_part11.run(
+            mapOf(
+                "/blocks.2/blocks.2.7/channel_block/ffn/Add_output_0" to _sessionVisionEncoder_part10_result["/blocks.2/blocks.2.7/channel_block/ffn/Add_output_0"].get() as OnnxTensor,
+                "/blocks.2/blocks.2.8/spatial_block/conv1/fn/Reshape_output_0" to _sessionVisionEncoder_part10_result["/blocks.2/blocks.2.8/spatial_block/conv1/fn/Reshape_output_0"].get() as OnnxTensor,
+            ),
+            setOf("/convs.3/Transpose_output_0"),
+            runOptions
+        )
+        val _sessionVisionEncoder_part12_result = _sessionVisionEncoder_part12.run(
+            mapOf(
+                "pixel_values" to pixelValues,
+                "/convs.3/Transpose_output_0" to _sessionVisionEncoder_part11_result["/convs.3/Transpose_output_0"].get() as OnnxTensor,
+            ),
+            setOf("image_features"),
+            runOptions
+        )
+        return _sessionVisionEncoder_part12_result[0] as OnnxTensor
     }
 
 

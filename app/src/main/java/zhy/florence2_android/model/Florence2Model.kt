@@ -5,13 +5,14 @@ import ai.onnxruntime.OrtEnvironment
 import ai.onnxruntime.OrtLoggingLevel
 import ai.onnxruntime.OrtSession
 import ai.onnxruntime.OrtSession.RunOptions
-import ai.onnxruntime.providers.NNAPIFlags
 import android.content.Context
 import android.os.Environment
 import android.util.Log
 import zhy.florence2_android.FlorenceResults
 import zhy.florence2_android.TaskTypes
 import zhy.florence2_android.R
+import zhy.florence2_android.debug.Florence2ModelEncoderTest
+import zhy.florence2_android.debug.Florence2ModelVisionEncoderTest
 import zhy.florence2_android.helper.TensorExtension
 import zhy.florence2_android.model.postprocessing.ByteLevelDecoder
 import zhy.florence2_android.model.postprocessing.Florence2PostProcessor
@@ -20,7 +21,6 @@ import zhy.florence2_android.model.postprocessing.NormalizedConfig
 import zhy.florence2_android.model.tokenizer.Florence2Tokenizer
 import java.nio.FloatBuffer
 import java.nio.LongBuffer
-import java.util.EnumSet
 
 private const val TAG = "Florence2Model"
 
@@ -34,7 +34,7 @@ class Florence2Model(private val context: Context) {
         setSessionLogVerbosityLevel(0)
 //        registerCustomOpLibrary(OrtxPackage.getLibraryPath())
 //        addConfigEntry("session.load_model_format", "ORT")
-        addNnapi(EnumSet.of(NNAPIFlags.USE_FP16))
+        addNnapi()
 
 //        val po = mapOf<String, String>()
 //        addXnnpack(po)
@@ -59,6 +59,8 @@ class Florence2Model(private val context: Context) {
     private val _sessionEmbedTokens: OrtSession = R.raw.embed_tokens_uint8.createByteSession()
     private val _sessionEncoder: OrtSession = R.raw.encoder_model_uint8.createByteSession()
     private val _sessionVisionEncoder: OrtSession = R.raw.vision_encoder_uint8.createByteSession()
+    private val florence2ModelVisionEncoderTest = Florence2ModelVisionEncoderTest(context)
+    private val florence2ModelEncoderTest = Florence2ModelEncoderTest(context)
 
     private val _tokenizer: Florence2Tokenizer = Florence2Tokenizer.Init(context)
     private val _imageProcessor: CLIPImageProcessor = CLIPImageProcessor(context)
@@ -121,16 +123,18 @@ class Florence2Model(private val context: Context) {
         val text_features = _sessionEmbedTokens.run(mapOf("input_ids" to inputIdsForEncoder), setOf("inputs_embeds"), runOptions)
         val inputsEmbeds  = text_features[0] as OnnxTensor
         pixelValues = TensorExtension.JoinBatches(listOf(pixelValues))
-        val imageFeaturesResult = _sessionVisionEncoder.run(mapOf("pixel_values" to pixelValues), setOf("image_features"), runOptions)
-        val imageFeatures       = imageFeaturesResult[0] as OnnxTensor
-//        val imageFeatures = mockImageFeature(context) // todo
+//        val imageFeaturesResult = _sessionVisionEncoder.run(mapOf("pixel_values" to pixelValues), setOf("image_features"), runOptions)
+//        val imageFeatures       = imageFeaturesResult[0] as OnnxTensor
+//        val imageFeatures = mockImageFeature(context)
+        val imageFeatures = florence2ModelVisionEncoderTest.run(pixelValues)
         Log.d(TAG, "Run imageFeatures")
         val (inputsEmbedsMerged, attentionMaskMerged) = MergeInputIdsWithImageFeatures(inputsEmbeds, imageFeatures, attentionMaskForEncoder)
         Log.d(TAG, "Run MergeInputIdsWithImageFeatures")
-        val forwardOut = _sessionEncoder.run(mapOf("attention_mask" to attentionMaskMerged, "inputs_embeds" to inputsEmbedsMerged), setOf( "last_hidden_state" ), runOptions)
+//        val forwardOut = _sessionEncoder.run(mapOf("attention_mask" to attentionMaskMerged, "inputs_embeds" to inputsEmbedsMerged), setOf( "last_hidden_state" ), runOptions)
+        val forwardOut = florence2ModelEncoderTest.run(attentionMaskMerged, inputsEmbedsMerged)
         Log.d(TAG, "Run forwardOut")
 
-        val lastHiddenState = forwardOut[0] as OnnxTensor
+        val lastHiddenState = forwardOut?.get(0) as OnnxTensor
 
         val encoderOutputs = lastHiddenState
 //        val encoderOutputs = mockEncoderOutputs(context)// todo
