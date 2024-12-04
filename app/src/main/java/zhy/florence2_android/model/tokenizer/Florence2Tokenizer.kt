@@ -366,7 +366,7 @@ class Florence2Tokenizer(
         return tokenized.map { tokens ->
             val padding = LongArray(sequenceLength - MaxTokens.coerceAtMost(tokens.size)) { 0L }.toList()
             val tokenIndexes = tokens.take(MaxTokens).map { token -> token.second.toLong() } + padding
-            val inputMask = tokens.take(MaxTokens).map { 0L } + padding
+            val inputMask = tokens.take(MaxTokens).map { 1L } + padding
             tokenIndexes to inputMask
         }
     }

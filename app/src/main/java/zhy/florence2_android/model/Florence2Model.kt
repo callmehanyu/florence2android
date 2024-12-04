@@ -130,8 +130,8 @@ class Florence2Model(private val context: Context) {
         Log.d(TAG, "Run imageFeatures")
         val (inputsEmbedsMerged, attentionMaskMerged) = MergeInputIdsWithImageFeatures(inputsEmbeds, imageFeatures, attentionMaskForEncoder)
         Log.d(TAG, "Run MergeInputIdsWithImageFeatures")
-//        val forwardOut = _sessionEncoder.run(mapOf("attention_mask" to attentionMaskMerged, "inputs_embeds" to inputsEmbedsMerged), setOf( "last_hidden_state" ), runOptions)
-        val forwardOut = florence2ModelEncoderTest.run(attentionMaskMerged, inputsEmbedsMerged)
+        val forwardOut = _sessionEncoder.run(mapOf("attention_mask" to attentionMaskMerged, "inputs_embeds" to inputsEmbedsMerged), setOf( "last_hidden_state" ), runOptions)
+//        val forwardOut = florence2ModelEncoderTest.run(attentionMaskMerged, inputsEmbedsMerged)
         Log.d(TAG, "Run forwardOut")
 
         val lastHiddenState = forwardOut?.get(0) as OnnxTensor

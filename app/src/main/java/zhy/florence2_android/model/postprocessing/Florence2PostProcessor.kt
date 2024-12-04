@@ -395,11 +395,18 @@ class Florence2PostProcessor(
     }
 }
 
+fun <T> List<T>.chunk(size: Int): List<List<T>> {
+    require(size > 0) { "Chunk size must be greater than 0." }
+    val result = mutableListOf<List<T>>()
+    var index = 0
 
-fun List<Int>.chunk(size: Int): List<List<Int>> {
-    return (0 until size).map { index ->
-        this.toIntArray().sliceArray(index * size until (index + 1) * size).toList()
+    while (index < this.size) {
+        val end = (index + size).coerceAtMost(this.size)
+        result.add(this.subList(index, end))
+        index += size
     }
+
+    return result
 }
 
 fun <T> MutableList<T>.removeRange(startIndex: Int, endIndex: Int) {

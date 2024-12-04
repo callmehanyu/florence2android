@@ -1,0 +1,41 @@
+
+onnx.utils.extract_model:”
+K
+/Unsqueeze_1_output_0
+/Where_output_0/Expand_output_0/Expand"ExpandExtracted from {main_graph}ZP
+/Unsqueeze_1_output_07
+51
+
+batch_size
+
+
+encoder_sequence_lengthZ
+/Where_output_0
+
+
+bb
+/Expand_output_0N
+LH
+
+batch_size
+
+encoder_sequence_length
+encoder_sequence_lengthjP
+/Unsqueeze_1_output_07
+51
+
+batch_size
+
+
+encoder_sequence_lengthj
+/Where_output_0
+
+
+jb
+/Expand_output_0N
+LH
+
+batch_size
+
+encoder_sequence_length
+encoder_sequence_lengthB

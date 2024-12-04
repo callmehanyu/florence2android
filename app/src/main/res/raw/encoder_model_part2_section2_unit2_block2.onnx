@@ -1,0 +1,33 @@
+
+onnx.utils.extract_model:ü
+„
+ /layers.0/self_attn/Add_output_0$/layers.0/self_attn/Softmax_output_0/layers.0/self_attn/Softmax"Softmax*
+axisÿÿÿÿÿÿÿÿÿ Extracted from {main_graph}Zr
+ /layers.0/self_attn/Add_output_0N
+LH
+
+batch_size
+
+encoder_sequence_length
+encoder_sequence_lengthbv
+$/layers.0/self_attn/Softmax_output_0N
+LH
+
+batch_size
+
+encoder_sequence_length
+encoder_sequence_lengthjr
+ /layers.0/self_attn/Add_output_0N
+LH
+
+batch_size
+
+encoder_sequence_length
+encoder_sequence_lengthjv
+$/layers.0/self_attn/Softmax_output_0N
+LH
+
+batch_size
+
+encoder_sequence_length
+encoder_sequence_lengthB
