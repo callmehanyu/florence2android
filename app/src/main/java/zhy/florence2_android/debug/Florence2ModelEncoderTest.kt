@@ -37,6 +37,8 @@ class Florence2ModelEncoderTest(private val context: Context) {
     private val _sessionEncoder_part2_section2: OrtSession = R.raw.encoder_model_part2_section2.createByteSession()
     private val _sessionEncoder_part2_section3: OrtSession = R.raw.encoder_model_part2_section3.createByteSession()
 
+    private val _sessionEncoder_part2_section2_unit1: OrtSession = R.raw.encoder_model_part2_section2_unit1.createByteSession()
+    private val _sessionEncoder_part2_section2_unit2: OrtSession = R.raw.encoder_model_part2_section2_unit2.createByteSession()
 
     private fun Int.createByteSession(sessionOptions: OrtSession.SessionOptions = _sessionOptions): OrtSession {
         return ortEnv.createSession(
@@ -76,6 +78,37 @@ class Florence2ModelEncoderTest(private val context: Context) {
             mapOf(
                 "/Where_1_output_0" to _sessionEncoder_part1_result["/Where_1_output_0"].get() as OnnxTensor,
                 "/layernorm_embedding/Mul_output_0" to _sessionEncoder_part2_section1_result["/layernorm_embedding/Mul_output_0"].get() as OnnxTensor,
+            ),
+            setOf("/layers.0/Add_output_0"),
+            runOptions
+        )
+
+        val _sessionEncoder_part2_section2_unit1_result = _sessionEncoder_part2_section2_unit1.run(
+            mapOf(
+                "/layernorm_embedding/Mul_output_0" to _sessionEncoder_part2_section1_result["/layernorm_embedding/Mul_output_0"].get() as OnnxTensor,
+            ),
+            setOf(
+                "/layernorm_embedding/Add_1_output_0",
+                "/layers.0/self_attn/Concat_output_0",
+                "/layers.0/self_attn/Sqrt_1_output_0",
+                "/layers.0/self_attn/Mul_output_0",
+                "/layers.0/self_attn/Transpose_output_0",
+                "/layers.0/self_attn/Concat_3_output_0"
+            ),
+            runOptions
+        )
+
+        // todo 不准
+        val _sessionEncoder_part2_section2_unit2_result = _sessionEncoder_part2_section2_unit2.run(
+            mapOf(
+                "/Where_1_output_0" to _sessionEncoder_part1_result["/Where_1_output_0"].get() as OnnxTensor,
+
+                "/layernorm_embedding/Add_1_output_0" to _sessionEncoder_part2_section2_unit1_result["/layernorm_embedding/Add_1_output_0"].get() as OnnxTensor,
+                "/layers.0/self_attn/Concat_output_0" to _sessionEncoder_part2_section2_unit1_result["/layers.0/self_attn/Concat_output_0"].get() as OnnxTensor,
+                "/layers.0/self_attn/Sqrt_1_output_0" to _sessionEncoder_part2_section2_unit1_result["/layers.0/self_attn/Sqrt_1_output_0"].get() as OnnxTensor,
+                "/layers.0/self_attn/Mul_output_0" to _sessionEncoder_part2_section2_unit1_result["/layers.0/self_attn/Mul_output_0"].get() as OnnxTensor,
+                "/layers.0/self_attn/Transpose_output_0" to _sessionEncoder_part2_section2_unit1_result["/layers.0/self_attn/Transpose_output_0"].get() as OnnxTensor,
+                "/layers.0/self_attn/Concat_3_output_0" to _sessionEncoder_part2_section2_unit1_result["/layers.0/self_attn/Concat_3_output_0"].get() as OnnxTensor,
             ),
             setOf("/layers.0/Add_output_0"),
             runOptions
