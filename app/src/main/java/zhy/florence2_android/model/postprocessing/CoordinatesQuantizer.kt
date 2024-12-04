@@ -34,8 +34,8 @@ class CoordinatesQuantizer(
     fun dequantize(coordinates: Array<Coordinates<Int>>, size: Pair<Int, Int>): Array<Coordinates<Float>> {
         val (binsW, binsH) = bins  
         val (sizeW, sizeH) = size  
-        val sizePerBinW = sizeW / binsW  
-        val sizePerBinH = sizeH / binsH  
+        val sizePerBinW = sizeW / binsW.toFloat()
+        val sizePerBinH = sizeH / binsH.toFloat()
   
         val dequantizedCoordinates = Array(coordinates.size) { Coordinates<Float>(0f, 0f) }
   

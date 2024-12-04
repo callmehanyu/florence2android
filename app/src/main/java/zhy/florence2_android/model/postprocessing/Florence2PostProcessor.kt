@@ -184,7 +184,7 @@ class Florence2PostProcessor(
         val patternQustionMark = "([a-zA-Z0-9 ]+)<loc_(\\d+)><loc_(\\d+)><loc_(\\d+)><loc_(\\d+)>".toRegex()
 
         // Ignore <s> </s> and <pad>
-        var cleanedText = text.replace("<s>", "").replace("</s>", "").replace("<pad>", "")
+        val cleanedText = text.replace("<s>", "").replace("</s>", "").replace("<pad>", "")
 
         val phrasePattern = if (allowEmptyPhrase) {
             "(?:(?:<loc_\\d+>){4,})".toRegex()
@@ -232,19 +232,19 @@ class Florence2PostProcessor(
             }.toTypedArray()
 
             // Assuming boxQuantizer is defined somewhere and has a Dequantize method
-            // box.BBoxes = boxQuantizer.dequantize(bboxBins, imageSize) // Replace with actual dequantization logic
+             box.bBoxes = boxQuantizer.dequantize(bboxBins, imageSize) // Replace with actual dequantization logic
 
             // Exclude non-ASCII characters
             val cleanedPhrase = phrase.replace("[^\\u0000-\\u007F]".toRegex(), "")
 
             // Assuming ReplaceStartAndEndToken is defined somewhere
             // box.label = replaceStartAndEndToken(cleanedPhrase) // Replace with actual token replacement logic
-            box.label = cleanedPhrase // Modified directly for simplicity in this example
+            box.label = ReplaceStartAndEndToken(cleanedPhrase) // Modified directly for simplicity in this example
 
             // Assuming Dequantize and ReplaceStartAndEndToken methods are defined elsewhere
             // and are used to process bboxBins and phrase respectively.
             // Here we're just adding a placeholder for the dequantized bboxes.
-            box.bBoxes = arrayOf() // Placeholder for dequantized bboxes
+//            box.bBoxes = arrayOf() // Placeholder for dequantized bboxes
 
             result.add(box)
         }

@@ -9,8 +9,7 @@ enum class TaskTypes {
     OD,
     DENSE_REGION_CAPTION,
     CAPTION_TO_PHRASE_GROUNDING,
-    REFERRING_EXPRESSION_SEGMENTATION,
-    //TODO pius: not working properly, generated tokens don't seem to be ok
+    REFERRING_EXPRESSION_SEGMENTATION, //TODO pius: not working properly, generated tokens don't seem to be ok
     REGION_TO_SEGMENTATION,
     OPEN_VOCABULARY_DETECTION,
     REGION_TO_CATEGORY,
