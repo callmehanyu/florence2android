@@ -123,10 +123,10 @@ class Florence2Model(private val context: Context) {
         val text_features = _sessionEmbedTokens.run(mapOf("input_ids" to inputIdsForEncoder), setOf("inputs_embeds"), runOptions)
         val inputsEmbeds  = text_features[0] as OnnxTensor
         pixelValues = TensorExtension.JoinBatches(listOf(pixelValues))
-//        val imageFeaturesResult = _sessionVisionEncoder.run(mapOf("pixel_values" to pixelValues), setOf("image_features"), runOptions)
-//        val imageFeatures       = imageFeaturesResult[0] as OnnxTensor
+        val imageFeaturesResult = _sessionVisionEncoder.run(mapOf("pixel_values" to pixelValues), setOf("image_features"), runOptions)
+        val imageFeatures       = imageFeaturesResult[0] as OnnxTensor
 //        val imageFeatures = mockImageFeature(context)
-        val imageFeatures = florence2ModelVisionEncoderTest.run(pixelValues)
+//        val imageFeatures = florence2ModelVisionEncoderTest.run(pixelValues)
         Log.d(TAG, "Run imageFeatures")
         val (inputsEmbedsMerged, attentionMaskMerged) = MergeInputIdsWithImageFeatures(inputsEmbeds, imageFeatures, attentionMaskForEncoder)
         Log.d(TAG, "Run MergeInputIdsWithImageFeatures")

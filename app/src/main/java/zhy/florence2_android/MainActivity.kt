@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
             Snackbar.make(view, "执行 florence2 ", Snackbar.LENGTH_LONG)
                 .setAction("Action", null)
                 .setAnchorView(R.id.fab).show()
-            runOcrWithRegionTask(this)
+            runOcrTask(this)
         }
     }
 
