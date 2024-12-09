@@ -262,6 +262,11 @@ class Florence2Model(private val context: Context) {
         while (true) {
             Log.d(TAG, "while (true) start zhyCnt=$zhyCnt")
             zhyCnt ++
+
+            if (zhyCnt > 100) {
+                break
+            }
+
             val decoderInputsEmbeds = _sessionEmbedTokens.run(mapOf("input_ids" to decoderInputIds), setOf("inputs_embeds"), runOptions) // inputIds -> input_embeds
             val useCacheBranche = pastKeyValues != null
             val useCacheBranch = OnnxTensor.createTensor(OrtEnvironment.getEnvironment(), BooleanArray(1) { useCacheBranche })

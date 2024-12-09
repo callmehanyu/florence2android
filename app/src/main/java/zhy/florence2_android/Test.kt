@@ -11,17 +11,47 @@ import zhy.florence2_android.model.Florence2Model
 private const val TEST = "Florence2test"
 
 /**
- * todo 1 ocr 识别结果有出入
+ *
  */
-fun runTaskList(context: Context) {
+fun runTaskListBook(context: Context) {
 
     GlobalScope.launch(Dispatchers.IO) {
         val modelSession = Florence2Model(context)
-        TaskTypes.values().forEach { task ->
-            val resultsBook = modelSession.Run(task, "book.jpg", "DUANE")
-            Log.d(TEST, "$task : ${Gson().toJson(resultsBook)}")
-//        var resultsCar = modelSession.Run(task, "car.jpg", "window")
-        }
+        TaskTypes.entries
+//            .filterNot {
+//                it in listOf(
+//                    TaskTypes.REFERRING_EXPRESSION_SEGMENTATION,
+//                    TaskTypes.REGION_TO_SEGMENTATION
+//                )
+//            }
+            .forEach { task ->
+                val resultsBook = modelSession.Run(task, "book.jpg", "DUANE")
+                Log.d(TEST, "$task : ${Gson().toJson(resultsBook)}")
+            }
+    }
+
+}
+
+/**
+ *
+ */
+fun runTaskListCar(context: Context) {
+
+    GlobalScope.launch(Dispatchers.IO) {
+        val modelSession = Florence2Model(context)
+        TaskTypes.entries
+            .filterNot {
+                it in listOf(
+                    TaskTypes.OCR_WITH_REGION,
+                    TaskTypes.DETAILED_CAPTION,
+                    TaskTypes.REGION_TO_SEGMENTATION,
+                    TaskTypes.REGION_TO_CATEGORY,
+                )
+            }
+            .forEach { task ->
+                val resultsCar = modelSession.Run(task, "car.jpg", "window")
+                Log.d(TEST, "$task : ${Gson().toJson(resultsCar)}")
+            }
     }
 
 }
@@ -83,7 +113,7 @@ fun runDetailedCaptionTask(context: Context) {
         val modelSession = Florence2Model(context)
 
         val task = TaskTypes.DETAILED_CAPTION
-        val resultsBook = modelSession.Run(task, "book.jpg", "DUANE")
+        val resultsBook = modelSession.Run(task, "car.jpg", "DUANE")
         Log.d(TEST, "$task : ${Gson().toJson(resultsBook)}")
 
     }
@@ -251,7 +281,7 @@ fun runREGION_TO_OCRTask(context: Context) {
 }
 
 /**
- * todo not work
+ *
  */
 fun runREGION_PROPOSALTask(context: Context) {
 

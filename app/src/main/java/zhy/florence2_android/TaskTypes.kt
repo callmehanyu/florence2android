@@ -1,5 +1,8 @@
 package zhy.florence2_android
 
+/**
+ * todo 经过验证，每张图片都会有不同的任务无法执行
+ */
 enum class TaskTypes {
     OCR,
     OCR_WITH_REGION,
@@ -9,7 +12,7 @@ enum class TaskTypes {
     OD,
     DENSE_REGION_CAPTION,
     CAPTION_TO_PHRASE_GROUNDING,
-    REFERRING_EXPRESSION_SEGMENTATION, //TODO pius: not working properly, generated tokens don't seem to be ok
+    REFERRING_EXPRESSION_SEGMENTATION,
     REGION_TO_SEGMENTATION,
     OPEN_VOCABULARY_DETECTION,
     REGION_TO_CATEGORY,
