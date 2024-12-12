@@ -83,7 +83,7 @@ class Florence2Model(private val context: Context) {
 
         val (inputIdsForEncoder, attentionMaskForEncoder) = GetTextInputs(prompts)
         Log.d(TAG, "Run GetTextInputs")
-        var (pixelValues, imgSize)                        = _imageProcessor.Preprocess(imgPath) // todo 不太准
+        var (pixelValues, imgSize)                        = _imageProcessor.Preprocess(imgPath)
 //        var (pixelValues, imgSize)                        = _imageProcessor.PreprocessMock3(imgPath, "image_tensor.txt")
         Log.d(TAG, "Run _imageProcessor.Preprocess")
         val text_features = _sessionEmbedTokens.run(mapOf("input_ids" to inputIdsForEncoder), setOf("inputs_embeds"), runOptions)

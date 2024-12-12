@@ -13,7 +13,7 @@ private const val TEST = "Florence2test"
 /**
  *
  */
-fun runTaskListBook(context: Context) {
+fun runTaskList(context: Context, imgPath: String, textInput: String) {
 
     GlobalScope.launch(Dispatchers.IO) {
         val modelSession = Florence2Model(context)
@@ -25,7 +25,7 @@ fun runTaskListBook(context: Context) {
 //                )
 //            }
             .forEach { task ->
-                val resultsBook = modelSession.Run(task, "dama.png", "mom")
+                val resultsBook = modelSession.Run(task, imgPath, textInput)
                 Log.d(TEST, "$task : ${Gson().toJson(resultsBook)}")
             }
     }
@@ -139,33 +139,23 @@ fun runMoreDetailedCaptionTask(context: Context) {
 /**
  *
  */
-fun runODTask(context: Context) {
-
-    GlobalScope.launch(Dispatchers.IO) {
-        val modelSession = Florence2Model(context)
-
-        val task = TaskTypes.OD
-        val resultsBook = modelSession.Run(task, "book.jpg", "DUANE")
-        Log.d(TEST, "$task : ${Gson().toJson(resultsBook)}")
-
-    }
-
+fun runODTask(context: Context, imgPath: String): FlorenceResults? {
+    val modelSession = Florence2Model(context)
+    val task = TaskTypes.OD
+    val resultsBook = modelSession.Run(task, imgPath, "DUANE")
+    Log.d(TEST, "$task : ${Gson().toJson(resultsBook)}")
+    return resultsBook.getOrNull(0)
 }
 
 /**
- * todo demo book 也是空
+ *
  */
-fun runDENSE_REGION_CAPTIONTask(context: Context) {
-
-    GlobalScope.launch(Dispatchers.IO) {
-        val modelSession = Florence2Model(context)
-
-        val task = TaskTypes.DENSE_REGION_CAPTION
-        val resultsBook = modelSession.Run(task, "book.jpg", "DUANE")
-        Log.d(TEST, "$task : ${Gson().toJson(resultsBook)}")
-
-    }
-
+fun runDenseRegionCaptionTask(context: Context, imgPath: String): FlorenceResults? {
+    val modelSession = Florence2Model(context)
+    val task = TaskTypes.DENSE_REGION_CAPTION
+    val resultsBook = modelSession.Run(task, imgPath, "DUANE")
+    Log.d(TEST, "$task : ${Gson().toJson(resultsBook)}")
+    return resultsBook.getOrNull(0)
 }
 
 /**

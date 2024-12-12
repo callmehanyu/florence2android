@@ -9,12 +9,33 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/fab"
+        android:id="@+id/fab_runTaskList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginBottom="16dp"
-        android:text="执行 florence2 " />
+        android:text="执行 florence2 runTaskLis" />
+
+    <Button
+        android:id="@+id/fab_runODTask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="16dp"
+        android:text="执行 florence2 OD" />
+
+    <Button
+        android:id="@+id/fab_runDenseRegionCaptionTask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="16dp"
+        android:text="执行 florence2 DENSE_REGION_CAPTION" />
+
+    <ImageView
+        android:id="@+id/iv_DenseRegionCaption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
     <Button
         android:id="@+id/fab2"

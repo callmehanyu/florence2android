@@ -8,8 +8,8 @@ import java.io.IOException
 import java.io.InputStreamReader
 
 
-fun getBitmapFromAsset(context: Context, path: String): Bitmap {
-    val inputStream = context.assets.open(path)
+fun String.getBitmapFromAsset(context: Context): Bitmap {
+    val inputStream = context.assets.open(this)
      return BitmapFactory.decodeStream(inputStream)
 }
 

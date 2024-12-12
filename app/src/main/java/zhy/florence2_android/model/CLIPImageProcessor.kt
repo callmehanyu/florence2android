@@ -13,15 +13,17 @@ private const val TAG = "CLIPImageProcessor"
 
 class CLIPImageProcessor(private val context: Context) {
 
+    companion object {
+        private const val CROP_HEIGHT = 768
+        private const val CROP_WIDTH = 768
+    }
+
     fun Preprocess(imgPath: String): Pair<OnnxTensor, Pair<Int, Int>> {
-        val CropHeight = 768
-        val CropWidth = 768
-        val bitmap = getBitmapFromAsset(context, imgPath)
-            .crop(Rect(0, 0, CropWidth, CropHeight))
-//            .scaleBitmap(CropWidth, CropHeight)
+        val bitmap = imgPath.getBitmapFromAsset(context)
+            .crop(Rect(0, 0, CROP_WIDTH, CROP_HEIGHT))
         val tensorData = Array(3) {
-            Array(CropHeight) {
-                FloatArray(CropWidth)
+            Array(CROP_HEIGHT) {
+                FloatArray(CROP_WIDTH)
             }
         }
 
@@ -30,8 +32,8 @@ class CLIPImageProcessor(private val context: Context) {
         val RescaleFactor  = 0.00392156862745098f
 
 
-        for (y in 0 until CropHeight) {
-            for (x in 0 until CropWidth) {
+        for (y in 0 until CROP_HEIGHT) {
+            for (x in 0 until CROP_WIDTH) {
                 val pixel = if (x < bitmap.width && y < bitmap.height) {
                     bitmap.getPixel(x, y)
                 } else {
@@ -56,7 +58,7 @@ class CLIPImageProcessor(private val context: Context) {
     fun PreprocessMock3(imgPath: String, path: String): Pair<OnnxTensor, Pair<Int, Int>> {
         val CropHeight = 768
         val CropWidth = 768
-        val bitmap = getBitmapFromAsset(context, imgPath)
+        val bitmap = imgPath.getBitmapFromAsset(context)
             .crop(Rect(0, 0, CropWidth, CropHeight))
 
         val inputString = readAssetFile(context, path)
@@ -102,7 +104,7 @@ class CLIPImageProcessor(private val context: Context) {
     fun PreprocessMock4(imgPath: String, path: String): Pair<OnnxTensor, Pair<Int, Int>> {
         val CropHeight = 768
         val CropWidth = 768
-        val bitmap = getBitmapFromAsset(context, imgPath)
+        val bitmap = imgPath.getBitmapFromAsset(context)
             .crop(Rect(0, 0, CropWidth, CropHeight))
 
         val inputString = readAssetFile(context, path)

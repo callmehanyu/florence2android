@@ -18,7 +18,8 @@ enum class TaskTypes {
     REGION_TO_CATEGORY,
     REGION_TO_DESCRIPTION,
     REGION_TO_OCR,
-    REGION_PROPOSAL
+    REGION_PROPOSAL,
+//    CAPTION_PERSON,
 }
 
 internal val TaskPromptsWithoutInputsDict: Map<TaskTypes, String> = mapOf(
@@ -29,7 +30,8 @@ internal val TaskPromptsWithoutInputsDict: Map<TaskTypes, String> = mapOf(
     TaskTypes.MORE_DETAILED_CAPTION to "Describe with a paragraph what is shown in the image.",
     TaskTypes.OD to "Locate the objects with category name in the image.",
     TaskTypes.DENSE_REGION_CAPTION to "Locate the objects in the image, with their descriptions.",
-    TaskTypes.REGION_PROPOSAL to "Locate the region proposals in the image."
+    TaskTypes.REGION_PROPOSAL to "Locate the region proposals in the image.",
+//    TaskTypes.CAPTION_PERSON to "Locate the region proposals in the image.",
 )
 
 internal val TaskPromptsWithInputDict: Map<TaskTypes, String> = mapOf(

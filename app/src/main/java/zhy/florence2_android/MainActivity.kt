@@ -3,13 +3,15 @@ package zhy.florence2_android
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import zhy.florence2_android.helper.drawRedRectanglesWithCoordinates
+import zhy.florence2_android.helper.getBitmapFromAsset
 import zhy.florence2_android.media.LocalMediaRepo
 import zhy.florence2_android.media.knowledgegraph.db.example.AppDatabase
 import zhy.florence2_android.media.knowledgegraph.db.example.User
@@ -34,22 +36,58 @@ class MainActivity : AppCompatActivity() {
 
         requestPermissionOfWriteExternalStorage(this)
 
-        findViewById<Button>(R.id.fab).setOnClickListener { view ->
-            Snackbar.make(view, "执行 florence2 ", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab).show()
-            runTaskListBook(this)
+        findViewById<Button>(R.id.fab_runTaskList).setOnClickListener { view ->
+            runTaskList(this, "car.jpg", "")
+        }
+        findViewById<Button>(R.id.fab_runODTask).setOnClickListener { view ->
+            val path = "damalist.png"
+            lifecycleScope.launch {
+                val florenceResults = withContext(Dispatchers.IO) {
+                    runODTask(this@MainActivity, path)
+                }
+
+                withContext(Dispatchers.Main) {
+                    val rect = florenceResults?.BoundingBoxes?.getOrNull(0)?.bBoxes?.map {
+                        it.mapToRect()
+                    } ?: return@withContext
+
+                    val bitmap = path
+                        .getBitmapFromAsset(this@MainActivity)
+                        .drawRedRectanglesWithCoordinates(rect)
+                    findViewById<ImageView>(R.id.iv_DenseRegionCaption).setImageBitmap(bitmap)
+                }
+
+            }
+
+        }
+        findViewById<Button>(R.id.fab_runDenseRegionCaptionTask).setOnClickListener { view ->
+            val path = "damalist.png"
+            lifecycleScope.launch {
+                val florenceResults = withContext(Dispatchers.IO) {
+                    runDenseRegionCaptionTask(this@MainActivity, path)
+                }
+
+                withContext(Dispatchers.Main) {
+                    val rect = florenceResults?.BoundingBoxes?.getOrNull(0)?.bBoxes?.map {
+                        it.mapToRect()
+                    }
+                    val bitmap = if (rect == null) {
+                        path.getBitmapFromAsset(this@MainActivity)
+                    } else {
+                        path
+                            .getBitmapFromAsset(this@MainActivity)
+                            .drawRedRectanglesWithCoordinates(rect)
+                    }
+                    findViewById<ImageView>(R.id.iv_DenseRegionCaption).setImageBitmap(bitmap)
+                }
+
+            }
+
         }
         findViewById<Button>(R.id.fab2).setOnClickListener { view ->
-            Snackbar.make(view, "获取本地图片", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab2).show()
             localMediaRepo.getAllImage()
         }
         findViewById<Button>(R.id.fab3).setOnClickListener { view ->
-            Snackbar.make(view, "插入并执行", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab3).show()
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     val userDao = db.userDao()
