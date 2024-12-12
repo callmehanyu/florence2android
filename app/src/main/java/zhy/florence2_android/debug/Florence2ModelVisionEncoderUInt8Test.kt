@@ -1,3 +1,4 @@
+/*
 package zhy.florence2_android.debug
 
 import ai.onnxruntime.OnnxTensor
@@ -18,9 +19,11 @@ import java.util.EnumSet
 
 private const val TEST = "Florence2ModelVisionEncoderUInt8Test"
 
+*/
 /**
  *
- */
+ *//*
+
 fun runOcrTaskVisionEncoderUInt8Test(context: Context) {
 
     GlobalScope.launch(Dispatchers.IO) {
@@ -223,4 +226,4 @@ class Florence2ModelVisionEncoderUInt8Test(private val context: Context) {
     }
 
 
-}
+}*/

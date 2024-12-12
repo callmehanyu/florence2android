@@ -1,3 +1,4 @@
+/*
 package zhy.florence2_android.debug
 
 import ai.onnxruntime.OnnxTensor
@@ -222,3 +223,4 @@ class Florence2ModelVisionEncoderTest(private val context: Context) {
 
 
 }
+*/

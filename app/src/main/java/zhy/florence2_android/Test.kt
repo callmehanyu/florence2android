@@ -25,7 +25,7 @@ fun runTaskListBook(context: Context) {
 //                )
 //            }
             .forEach { task ->
-                val resultsBook = modelSession.Run(task, "book.jpg", "DUANE")
+                val resultsBook = modelSession.Run(task, "dama.png", "mom")
                 Log.d(TEST, "$task : ${Gson().toJson(resultsBook)}")
             }
     }

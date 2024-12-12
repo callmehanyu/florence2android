@@ -2,4 +2,11 @@
 plugins {
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.jetbrainsKotlinAndroid) apply false
+    alias(libs.plugins.googleDevtoolsKsp)
+}
+
+buildscript {
+    dependencies {
+        classpath("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.9.0-1.0.13")
+    }
 }

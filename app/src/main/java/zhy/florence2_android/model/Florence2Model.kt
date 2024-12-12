@@ -6,13 +6,12 @@ import ai.onnxruntime.OrtLoggingLevel
 import ai.onnxruntime.OrtSession
 import ai.onnxruntime.OrtSession.RunOptions
 import android.content.Context
-import android.os.Environment
 import android.util.Log
 import zhy.florence2_android.FlorenceResults
 import zhy.florence2_android.TaskTypes
 import zhy.florence2_android.R
-import zhy.florence2_android.debug.Florence2ModelEncoderTest
-import zhy.florence2_android.debug.Florence2ModelVisionEncoderTest
+import zhy.florence2_android.TaskPromptsWithInputDict
+import zhy.florence2_android.TaskPromptsWithoutInputsDict
 import zhy.florence2_android.helper.TensorExtension
 import zhy.florence2_android.model.postprocessing.ByteLevelDecoder
 import zhy.florence2_android.model.postprocessing.Florence2PostProcessor
@@ -39,16 +38,6 @@ class Florence2Model(private val context: Context) {
 //        val po = mapOf<String, String>()
 //        addXnnpack(po)
     }
-    private val _sessionOptionsNnapi: OrtSession.SessionOptions = OrtSession.SessionOptions().apply {
-        setSessionLogLevel(OrtLoggingLevel.ORT_LOGGING_LEVEL_VERBOSE)
-        setSessionLogVerbosityLevel(0)
-//        registerCustomOpLibrary(OrtxPackage.getLibraryPath())
-            addConfigEntry("session.load_model_format", "ORT") // todo
-        addNnapi()
-
-//        val po = mapOf<String, String>()
-//        addXnnpack(po)
-    }
     // decoder_model_merged_uint8.with_runtime_opt.ort
 //    private val _sessionDecoderMerged: OrtSession = "decoder_model_merged_uint8.ort".createSDSession()
 //    private val _sessionEmbedTokens: OrtSession = "embed_tokens_uint8.ort".createSDSession()
@@ -59,53 +48,30 @@ class Florence2Model(private val context: Context) {
     private val _sessionEmbedTokens: OrtSession = R.raw.embed_tokens_uint8.createByteSession()
     private val _sessionEncoder: OrtSession = R.raw.encoder_model_uint8.createByteSession()
     private val _sessionVisionEncoder: OrtSession = R.raw.vision_encoder_uint8.createByteSession()
-    private val florence2ModelVisionEncoderTest = Florence2ModelVisionEncoderTest(context)
-    private val florence2ModelEncoderTest = Florence2ModelEncoderTest(context)
+//    private val florence2ModelVisionEncoderTest = Florence2ModelVisionEncoderTest(context)
+//    private val florence2ModelEncoderTest = Florence2ModelEncoderTest(context)
 
     private val _tokenizer: Florence2Tokenizer = Florence2Tokenizer.Init(context)
     private val _imageProcessor: CLIPImageProcessor = CLIPImageProcessor(context)
     private val _postProcessor: Florence2PostProcessor = Florence2PostProcessor()
 
-    private val TaskPromptsWithoutInputsDict: Map<TaskTypes, String> = mapOf(
-        TaskTypes.OCR to "What is the text in the image?",
-        TaskTypes.OCR_WITH_REGION to "What is the text in the image, with regions?",
-        TaskTypes.CAPTION to "What does the image describe?",
-        TaskTypes.DETAILED_CAPTION to "Describe in detail what is shown in the image.",
-        TaskTypes.MORE_DETAILED_CAPTION to "Describe with a paragraph what is shown in the image.",
-        TaskTypes.OD to "Locate the objects with category name in the image.",
-        TaskTypes.DENSE_REGION_CAPTION to "Locate the objects in the image, with their descriptions.",
-        TaskTypes.REGION_PROPOSAL to "Locate the region proposals in the image."
-    )
 
-    private val TaskPromptsWithInputDict: Map<TaskTypes, String> = mapOf(
-        TaskTypes.CAPTION_TO_PHRASE_GROUNDING to "Locate the phrases in the caption: %s",
-        TaskTypes.REFERRING_EXPRESSION_SEGMENTATION to "Locate %s in the image with mask",
-        TaskTypes.REGION_TO_SEGMENTATION to "What is the polygon mask of region %s",
-        TaskTypes.OPEN_VOCABULARY_DETECTION to "Locate %s in the image.",
-        TaskTypes.REGION_TO_CATEGORY to "What is the region %s?",
-        TaskTypes.REGION_TO_DESCRIPTION to "What does the region %s describe?",
-        TaskTypes.REGION_TO_OCR to "What text is in the region %s?"
-    )
 
     private fun Int.createByteSession(sessionOptions: OrtSession.SessionOptions = _sessionOptions): OrtSession {
         return ortEnv.createSession(context.resources.openRawResource(this).readBytes(), sessionOptions)
     }
 
-    /**
-     * todo ai.onnxruntime.OrtException: Error code - ORT_INVALID_ARGUMENT - message: Invalid fd was supplied: -1
-     */
-    private fun String.createSDSession(sessionOptions: OrtSession.SessionOptions = _sessionOptions): OrtSession {
-        val modelPath = Environment.getExternalStorageDirectory().absolutePath + "/models/" + this
-        return ortEnv.createSession(modelPath, sessionOptions)
-    }
-
     private fun ConstructPrompts(taskType: TaskTypes, textInput: String): String {
-        return if (taskType in TaskPromptsWithoutInputsDict) {
-            TaskPromptsWithoutInputsDict[taskType] ?: ""
-        } else if (taskType in TaskPromptsWithInputDict) {
-            String.format(TaskPromptsWithInputDict[taskType] ?: "", textInput)
-        } else {
-            throw Exception("not found task type$taskType")
+        return when (taskType) {
+            in TaskPromptsWithoutInputsDict -> {
+                TaskPromptsWithoutInputsDict[taskType] ?: ""
+            }
+            in TaskPromptsWithInputDict -> {
+                String.format(TaskPromptsWithInputDict[taskType] ?: "", textInput)
+            }
+            else -> {
+                throw Exception("not found task type$taskType")
+            }
         }
     }
 
